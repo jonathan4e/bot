@@ -34,7 +34,7 @@ git clone https://github.com/jonathan4e/bot.git
 - Install all the required modules from `requirements.txt`
 
 ```bash
-pip install --r requirements.txt
+pip install -r requirements.txt
 ```
 
 - Add your discord bot token and gemini api key into the `.env` file.
