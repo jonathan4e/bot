@@ -7,6 +7,7 @@ import random
 from google import genai
 import aiohttp
 import asyncio
+import requests
 
 load_dotenv()
 TOKEN = os.getenv("DISCORD_TOKEN")
@@ -56,8 +57,8 @@ async def ai_command(interaction: discord.Interaction, prompt: str):
 async def joke(ctx: commands.Context):
     await ctx.defer()
     async with aiohttp.ClientSession() as session:
-        async with session.get("https://official-joke-api.appspot.com/random_joke") as resp:
-            data = await resp.json()
+        async with session.get("https://official-joke-api.appspot.com/random_joke") as response:
+            data = await response.json()
     await ctx.send(f"{data['setup']} - {data['punchline']}")
 
 @bot.hybrid_command(name="rps", description="Play Rock Paper Scissors")
@@ -81,14 +82,58 @@ async def rps(ctx: commands.Context, choice: str):
 
 
 @bot.hybrid_command(name="coinflip", description="Flip a coin")
-async def coinflip(ctx: commands.Context):
+async def coinflip(ctx):
     result = random.choice(["Heads", "Tails"])
     await ctx.send(f"The coin landed on {result}")
 
 
 @bot.hybrid_command(name="roll", description="Roll a dice")
-async def roll(ctx:commands.Context):
+async def roll(ctx):
     await ctx.send(f"You rolled the number {random.randint(1, 6)}") 
+
+@bot.hybrid_command(name="quote", description="Tells a quote"   )
+async def quote(ctx):
+    await ctx.defer()
+    async with aiohttp.ClientSession() as session:
+        async with session.get("https://api.quotable.io/random") as response:
+            data = await response.json()
+            await ctx.send(f"{data['content']} - {data['author']}")
+
+@bot.hybrid_command(name="reminder", description="Set a reminder")
+async def reminder(ctx, time:int, message:str):
+    await ctx.send(f"Reminder set for {time} minutes from now.")
+    await asyncio.sleep(time * 60)
+    await ctx.send(f"Reminder: {message} ({ctx.author.mention})")
+
+
+@bot.hybrid_command(name="weather", description="Get live weather")
+async def weather(ctx, city:str):
+    url = f"https://wttr.in/{city}?format=3"
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url) as response:
+                if response.status == 200:
+                    data = await response.text()
+                    await ctx.send(f"Weather in {city} : {data}")
+                else:
+                    await ctx.send("Couldn't fetch weather data")
+
+@bot.hybrid_command(name="serverinfo", description="Get server info")
+async def serverinfo(ctx):
+    guild = ctx.guild
+    embed = discord.Embed(title=f"{guild.name} Info", color=discord.Color.blue())
+    embed.add_field(name="Server Name", value=guild.name, inline=False)
+    embed.add_field(name="Server ID", value=guild.id, inline=False)
+    embed.add_field(name="Member Count", value=guild.member_count, inline=False)
+    embed.add_field(name="Owner", value=guild.owner, inline=False)
+    embed.add_field(name="Created On", value=guild.created_at.strftime("%Y-%m-%d"), inline=False)
+    embed.add_field(name="Boost Count", value=guild.premium_subscription_count, inline=False)
+    embed.set_footer(text=f"For {ctx.author}")
+    if guild.icon:
+        embed.set_thumbnail(url=guild.icon.url)
+    await ctx.send(embed=embed)
+
+)
 
 
 bot.run(TOKEN)
+
