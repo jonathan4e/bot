@@ -2,13 +2,28 @@
 
 AllBot is a discord bot that was made to elimanate the need of having multiple discord bots in a server, and limiting it to one.
 
-It comes with multiple pre-made commands.
+It comes with 10+ commands.
+
+Includes:
+
+- ping
+- welcomer
+- AI chatbot
+- joke
+- rock paper scissors
+- coinflip
+- diceroll
+- quote
+- reminder
+- weather
+- serverinfo
+- time
 
 ----
 
-## Hosting the bot
+## Running the bot
 
-To host the bot,
+To run the bot,
 
 - Clone this repository to your desired furectory of choice.
 

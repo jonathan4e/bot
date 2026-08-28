@@ -7,7 +7,7 @@ import random
 from google import genai
 import aiohttp
 import asyncio
-import requests
+import time
 
 load_dotenv()
 TOKEN = os.getenv("DISCORD_TOKEN")
@@ -42,14 +42,14 @@ async def ai_command(interaction: discord.Interaction, prompt: str):
     response = await loop.run_in_executor(
         None, 
         lambda: gemini_client.models.generate_content(
-            model="gemini-2.5-flash", 
-            contents=prompt
+            model="gemini-3.6-lite", 
+            contents    =prompt
         )
     )
 
     text = response.text
-    if len(text) > 1990:
-        text = text[:1990] + "..."
+    if len(text) > 1995:
+        text = text[:1995] + "..."
 
     await interaction.followup.send(text)
 
@@ -87,8 +87,8 @@ async def coinflip(ctx):
     await ctx.send(f"The coin landed on {result}")
 
 
-@bot.hybrid_command(name="roll", description="Roll a dice")
-async def roll(ctx):
+@bot.hybrid_command(name="diceroll", description="Roll a dice")
+async def diceroll(ctx):
     await ctx.send(f"You rolled the number {random.randint(1, 6)}") 
 
 @bot.hybrid_command(name="quote", description="Tells a quote"   )
@@ -121,7 +121,7 @@ async def weather(ctx, city:str):
 async def serverinfo(ctx):
     guild = ctx.guild
     embed = discord.Embed(title=f"{guild.name} Info", color=discord.Color.blue())
-    embed.add_field(name="Server Name", value=guild.name, inline=False)
+    embed.add_field(name="Sercer Name", value=guild.name, inline=False)
     embed.add_field(name="Server ID", value=guild.id, inline=False)
     embed.add_field(name="Member Count", value=guild.member_count, inline=False)
     embed.add_field(name="Owner", value=guild.owner, inline=False)
@@ -132,7 +132,19 @@ async def serverinfo(ctx):
         embed.set_thumbnail(url=guild.icon.url)
     await ctx.send(embed=embed)
 
-)
+
+@bot.hybrid_command(name="time", description="Gets the current time")
+async def time(ctx):
+    await ctx.send(f"The current time is: {time.ctime()}")
+
+
+@bot.hybrid_command(name="whoami", description="Who am I?")
+async def whoami(ctx):
+    await ctx.send(f"You are {ctx.author.name}")
+
+@bot.hybrid_command(name="whoareu", description="Who are you?")
+async def whoareu(ctx):
+    await ctx.send(f"I am AllBot, your all-in-one Discord bot")
 
 
 bot.run(TOKEN)
