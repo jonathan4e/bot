@@ -19,7 +19,7 @@ bot = commands.Bot(command_prefix="!", intents=intents)
 @bot.event
 async def on_ready():
     await bot.tree.sync()
-    print(f"{bot.user} is connected")
+    print(f"{bot.user} is connected to Discord!")
 
 @bot.tree.command(name="ping", description="Ping the bot")
 async def ping(interaction: discord.Interaction):
@@ -78,6 +78,17 @@ async def rps(ctx: commands.Context, choice: str):
         await ctx.send(f"You win! You chose {user} and I chose {botchoice}.")
     else:
         await ctx.send(f"You lose! You chose {user} and I chose {botchoice}.")
+
+
+@bot.hybrid_command(name="coinflip", description="Flip a coin")
+async def coinflip(ctx: commands.Context):
+    result = random.choice(["Heads", "Tails"])
+    await ctx.send(f"The coin landed on {result}")
+
+
+@bot.hybrid_command(name="roll", description="Roll a dice")
+async def roll(ctx:commands.Context):
+    await ctx.send(f"You rolled the number {random.randint(1, 6)}") 
 
 
 bot.run(TOKEN)
